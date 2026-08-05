@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NovoIntel India | Tier-Based Commercial Intelligence Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet.js for Interactive Light/CartoDB Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Mobile Top Navigation Header -->
+    <header class="mobile-navbar">
+        <div class="mobile-brand">
+            <img src="official_apis_bull.png" alt="Novo Nordisk Logo" class="mobile-brand-logo">
+            <div class="mobile-brand-text">
+                <h2>NovoIntel <span>India</span></h2>
+            </div>
+        </div>
+        <button class="mobile-menu-toggle" id="btn-toggle-mobile-menu">
+            <i data-lucide="menu"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Drawer Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="brand">
+                <!-- Exact Uploaded Official Novo Nordisk Apis Bull Logo -->
+                <div class="brand-logo-wrapper">
+                    <img src="official_apis_bull.png" alt="Novo Nordisk Apis Bull Logo" class="apis-bull-img">
+                </div>
+                <div class="brand-text">
+                    <h2>NovoIntel <span>India</span></h2>
+                    <p>Commercial AI Overlay</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="problem-statement">
+                    <i data-lucide="target"></i>
+                    <span>Problem Statement</span>
+                </button>
+                <button class="nav-btn" data-tab="geography">
+                    <i data-lucide="map-pin"></i>
+                    <span>Interactive India Map</span>
+                </button>
+                <button class="nav-btn" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Tier Control Tower</span>
+                </button>
+                <button class="nav-btn" data-tab="launch-recommender">
+                    <i data-lucide="rocket"></i>
+                    <span>Launch Engine by Tier</span>
+                </button>
+                <button class="nav-btn" data-tab="simulator">
+                    <i data-lucide="sliders"></i>
+                    <span>Field Resource Simulator</span>
+                </button>
+                <button class="nav-btn" data-tab="copilot">
+                    <i data-lucide="bot"></i>
+                    <span>AI Decision Assistant</span>
+                </button>
+            </nav>
+
+            <div class="user-context">
+                <div class="context-badge">
+                    <span class="pulse-dot"></span>
+                    <span>Novo Nordisk Commercial Engine</span>
+                </div>
+                <div class="context-info">
+                    <p class="user-name">Novo Nordisk India</p>
+                    <p class="user-role">Commercial Operations</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="page-title">Problem Statement</h1>
+                    <p id="page-subtitle">Commercial execution & regional revenue optimization framework for Novo Nordisk India</p>
+                </div>
+                <div class="header-actions">
+                    <div class="time-filter">
+                        <i data-lucide="layers"></i>
+                        <select id="tier-global-filter">
+                            <option value="all">All Market Tiers</option>
+                            <option value="tier1">Tier-1 Metros (NCR, Mumbai, BLR)</option>
+                            <option value="tier2">Tier-2 Growth (Lucknow, Jaipur, Covai)</option>
+                            <option value="tier3">Tier-3 Semi-Urban / District Hubs</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="btn-export">
+                        <i data-lucide="download"></i> Export Brief
+                    </button>
+                </div>
+            </header>
+
+            <!-- Tab Content 1: Clean Problem Statement -->
+            <section id="problem-statement-tab" class="tab-pane active">
+                <div class="ps-container">
+                    <div class="ps-header">
+                        <span class="ps-tag-brand">Novo Nordisk India • Commercial AI Framework</span>
+                        <h2>Core Problem Statement</h2>
+                    </div>
+
+                    <div class="ps-box-main">
+                        <h3><i data-lucide="alert-circle"></i> Problem Statement Definition</h3>
+                        <p>"Novo Nordisk India lacks an automated data intelligence layer to understand tier-wise sales performance—leaving commercial teams reliant on manual Excel projections to decide which products to launch in Tier-2 vs Tier-1 cities, and how to allocate sales reps to capture revenue gaps."</p>
+                    </div>
+
+                    <div class="ps-section">
+                        <h4><i data-lucide="info"></i> Background & Context</h4>
+                        <ul class="ps-list">
+                            <li><i data-lucide="check-circle-2" style="color: #008bc6;"></i> <span><strong>Nationwide Network:</strong> Novo Nordisk operates across all of India, collecting extensive distributor, pharmacy, and hospital sales data.</span></li>
+                            <li><i data-lucide="check-circle-2" style="color: #008bc6;"></i> <span><strong>Regional Execution Disparity:</strong> Product adoption varies significantly by market tier—Tier-1 Metros (NCR, Mumbai, Bengaluru) show rapid GLP-1 adoption, while Tier-2 Growth Hubs (Lucknow, Jaipur, Coimbatore) represent a ₹285 Cr untapped revenue gap due to doctor coverage limits and distributor stock caps.</span></li>
+                            <li><i data-lucide="check-circle-2" style="color: #008bc6;"></i> <span><strong>Manual Projections:</strong> Territory forecasting and sales targets are currently estimated manually in static spreadsheets rather than using real-time predictive machine learning.</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="ps-section">
+                        <h4><i data-lucide="target"></i> Project Objectives</h4>
+                        <ul class="ps-list">
+                            <li><i data-lucide="arrow-right-circle" style="color: #059669;"></i> <span><strong>Automate Revenue Attribution:</strong> Instantly pinpoint underperforming cities and diagnose root causes (Doctor Coverage Gap vs. Stockist Credit Cap vs. Price Sensitivity).</span></li>
+                            <li><i data-lucide="arrow-right-circle" style="color: #059669;"></i> <span><strong>Tier-Based Product Launch Matcher:</strong> Recommend the optimal rollout sequence (Tier-1 ➔ Tier-2 ➔ Tier-3) for pipeline therapies like Icodec once-weekly insulin and Wegovy.</span></li>
+                            <li><i data-lucide="arrow-right-circle" style="color: #059669;"></i> <span><strong>Field Resource Simulator:</strong> Allow commercial leadership to simulate sales rep re-allocations to maximize 12-month revenue ROI.</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="ps-action-footer">
+                        <button class="btn btn-primary btn-lg" id="btn-goto-map">
+                            <i data-lucide="map-pin"></i> View Interactive India Map
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab Content 2: Large Eye-Catching Interactive India Map & Downward Section -->
+            <section id="geography-tab" class="tab-pane">
+                <!-- Map Container Card -->
+                <div class="map-card full-width-map">
+                    <div class="map-header">
+                        <div class="map-legend-title">
+                            <i data-lucide="map-pin" style="color: #001965;"></i>
+                            <span>National Coverage Legend:</span>
+                        </div>
+                        <div class="map-legend">
+                            <span class="legend-chip tier1"><span class="pulse-marker green"></span> Tier-1 Metros</span>
+                            <span class="legend-chip tier2"><span class="pulse-marker amber"></span> Tier-2 Growth Cities</span>
+                        </div>
+                    </div>
+                    <div id="india-map-container" class="large-map-view-box"></div>
+                </div>
+
+                <!-- Downward Section 1: Quality Check Audit Banner -->
+                <div class="qc-audit-bar">
+                    <div class="qc-title">
+                        <i data-lucide="shield-check" style="color: #059669;"></i>
+                        <span>Quality Check Status: <strong>MOBILE RESPONSIVE & VERIFIED</strong></span>
+                    </div>
+                    <div class="qc-stats">
+                        <span class="qc-stat-item"><i data-lucide="check"></i> Mobile Viewports Ready</span>
+                        <span class="qc-stat-item"><i data-lucide="check"></i> Leaflet Touch Active</span>
+                        <span class="qc-stat-item"><i data-lucide="check"></i> AI Assistant Engine Live</span>
+                    </div>
+                </div>
+
+                <!-- Downward Section 2: City Selector Strip -->
+                <div class="city-strip-container">
+                    <span class="strip-label"><i data-lucide="mouse-pointer-click"></i> Select City for Deep-Dive Analysis:</span>
+                    <div class="city-chips-horizontal" id="city-selector-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Downward Section 3: Deep-Dive Detailed Panel (Shown on Click) -->
+                <div class="city-deep-dive-card" id="city-deep-dive" style="display: none;">
+                    <div class="deep-dive-header">
+                        <div class="deep-dive-title">
+                            <h2 id="dd-city-name">Lucknow & Kanpur Cluster</h2>
+                            <span class="badge amber" id="dd-city-tier">Tier-2 Growth Hub</span>
+                            <span class="city-region" id="dd-city-region">North India Corridor</span>
+                        </div>
+                        <button class="btn btn-outline" id="btn-close-deep-dive"><i data-lucide="x"></i> Close Deep-Dive</button>
+                    </div>
+
+                    <div class="deep-dive-metrics-grid">
+                        <div class="dd-stat-card">
+                            <span>Current Annual Revenue</span>
+                            <h3 id="dd-rev-actual">₹110 Cr</h3>
+                        </div>
+                        <div class="dd-stat-card">
+                            <span>AI Epidemiological Potential</span>
+                            <h3 id="dd-rev-potential">₹150 Cr</h3>
+                        </div>
+                        <div class="dd-stat-card negative">
+                            <span>Revenue Opportunity Gap</span>
+                            <h3 id="dd-rev-gap">₹40 Cr (28%)</h3>
+                        </div>
+                        <div class="dd-stat-card">
+                            <span>Top Therapy Category</span>
+                            <h3 id="dd-top-therapy">Oral GLP-1 (Rybelsus)</h3>
+                        </div>
+                    </div>
+
+                    <div class="deep-dive-content-grid">
+                        <div class="dd-section-card alert-border">
+                            <h3><i data-lucide="alert-triangle"></i> What is Lacking? (Operational Bottlenecks)</h3>
+                            <ul class="dd-list" id="dd-lacking-list">
+                                <!-- JS Populated -->
+                            </ul>
+                        </div>
+
+                        <div class="dd-section-card highlight-border">
+                            <h3><i data-lucide="check-circle-2"></i> Recommended AI Intervention</h3>
+                            <div class="ai-action-box" id="dd-ai-action">
+                                <!-- JS Populated -->
+                            </div>
+                        </div>
+
+                        <div class="dd-section-card">
+                            <h3><i data-lucide="bar-chart-2"></i> Sales & Field Parameters</h3>
+                            <div class="dd-param-grid" id="dd-sales-params">
+                                <!-- JS Populated -->
+                            </div>
+                        </div>
+
+                        <div class="dd-section-card">
+                            <h3><i data-lucide="megaphone"></i> Marketing & HCP Engagement</h3>
+                            <div class="dd-param-grid" id="dd-marketing-params">
+                                <!-- JS Populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab Content 3: Tier Control Tower -->
+            <section id="dashboard-tab" class="tab-pane">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="card-icon blue"><i data-lucide="indian-rupee"></i></div>
+                        <div class="card-info">
+                            <span class="card-label">Total Annualized Revenue</span>
+                            <h3 class="card-value">₹3,840 Cr</h3>
+                            <span class="trend positive"><i data-lucide="trending-up"></i> +14.2% YoY (Baseline)</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="card-icon green"><i data-lucide="building"></i></div>
+                        <div class="card-info">
+                            <span class="card-label">Tier-1 Metro Share</span>
+                            <h3 class="card-value">54% (₹2,073 Cr)</h3>
+                            <span class="card-subtext">High GLP-1 & Smart Pen adoption</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="card-icon amber"><i data-lucide="trending-up"></i></div>
+                        <div class="card-info">
+                            <span class="card-label">Tier-2 Opportunity Gap</span>
+                            <h3 class="card-value">₹285 Cr Gap</h3>
+                            <span class="trend negative"><i data-lucide="alert-triangle"></i> Fast growth; Stockist limits</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="card-icon purple"><i data-lucide="truck"></i></div>
+                        <div class="card-info">
+                            <span class="card-label">Tier-3 Cold Chain Risk</span>
+                            <h3 class="card-value">18.4% Risk Index</h3>
+                            <span class="card-subtext">Vulnerable to power disruptions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-card flex-2">
+                        <div class="chart-header">
+                            <div>
+                                <h3>Revenue & AI Opportunity Potential by City Tier</h3>
+                                <p class="chart-sub">Comparing actual revenue vs AI-calculated market potential</p>
+                            </div>
+                            <div class="chart-legend-custom">
+                                <span class="legend-item"><span class="dot actual"></span> Actual Revenue</span>
+                                <span class="legend-item"><span class="dot target"></span> AI Potential</span>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="tierRevenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card flex-1">
+                        <div class="chart-header">
+                            <h3>Therapy Portfolio Mix by Tier</h3>
+                            <p class="chart-sub">Oral GLP-1 vs Basal vs Premix Insulin share</p>
+                        </div>
+                        <div class="chart-body flex-center">
+                            <canvas id="tierPortfolioChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab Content 4: Launch Engine by Tier -->
+            <section id="launch-recommender-tab" class="tab-pane">
+                <div class="launch-container">
+                    <div class="launch-header-box">
+                        <div class="launch-input-group">
+                            <label><i data-lucide="package"></i> Select Pipeline Product for Rollout:</label>
+                            <select id="launch-product-select">
+                                <option value="icodec">Icodec (Once-Weekly Basal Insulin)</option>
+                                <option value="wegovy">Wegovy / Anti-Obesity Therapy</option>
+                                <option value="rybelsus-high">High-Dose Oral GLP-1 (Rybelsus 14mg)</option>
+                                <option value="novopen">NovoPen Smart Connected Ecosystem</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btn-run-launch-ai">
+                            <i data-lucide="cpu"></i> Calculate Match
+                        </button>
+                    </div>
+
+                    <div class="launch-results-grid">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3>Product Match Score by Tier</h3>
+                                <p class="chart-sub">AI scoring based on doctor profile, patient budget & logistics</p>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="launchTierChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="launch-strategy-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="check-check"></i> Recommended Phased Launch Roadmap</h3>
+                            </div>
+                            <div class="rollout-timeline" id="rollout-timeline">
+                                <!-- Dynamic JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab Content 5: Simulator -->
+            <section id="simulator-tab" class="tab-pane">
+                <div class="simulator-layout">
+                    <div class="sim-controls-card">
+                        <h3><i data-lucide="sliders"></i> Field Resource Allocator</h3>
+                        <p class="sim-sub">Simulate moving field force & marketing spend between Metros and Tier-2 cities.</p>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span>Shift Sales Reps to Tier-2 Cities</span>
+                                <span class="slider-val" id="val-field-shift">+15%</span>
+                            </div>
+                            <input type="range" id="slider-field-shift" min="-20" max="40" value="15">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span>Tier-2 Doctor CME & Awareness Budget</span>
+                                <span class="slider-val" id="val-hcp-marketing">+20%</span>
+                            </div>
+                            <input type="range" id="slider-hcp-marketing" min="0" max="50" value="20">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span>Tier-3 Cold Chain & Stockist Credit Incentive</span>
+                                <span class="slider-val" id="val-distributor-incentive">+10%</span>
+                            </div>
+                            <input type="range" id="slider-distributor-incentive" min="0" max="30" value="10">
+                        </div>
+
+                        <button class="btn btn-primary full-width" id="btn-recalculate-sim">
+                            <i data-lucide="refresh-cw"></i> Recalculate AI Projections
+                        </button>
+                    </div>
+
+                    <div class="sim-results-card">
+                        <div class="sim-header">
+                            <h3>Simulated 12-Month Impact Projection</h3>
+                            <div class="sim-badge positive" id="sim-net-badge">+₹214 Cr Projected Revenue Delta</div>
+                        </div>
+
+                        <div class="chart-body">
+                            <canvas id="simulationChart"></canvas>
+                        </div>
+
+                        <div class="sim-breakdown-cards">
+                            <div class="mini-card">
+                                <span>Projected ROI</span>
+                                <h4 id="sim-roi-val">4.5x</h4>
+                            </div>
+                            <div class="mini-card">
+                                <span>Top Gaining Hubs</span>
+                                <h4 id="sim-gaining-territory">Lucknow & Jaipur</h4>
+                            </div>
+                            <div class="mini-card">
+                                <span>Stock Re-allocation Needed</span>
+                                <h4 id="sim-inventory-shift">+32k FlexTouch Pens to Tier-2</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab Content 6: AI Copilot -->
+            <section id="copilot-tab" class="tab-pane">
+                <div class="copilot-container">
+                    <div class="copilot-sidebar">
+                        <h3>Strategic AI Queries</h3>
+                        <div class="query-chip-list">
+                            <button class="query-chip">Why is Rybelsus growth flattening in Tier-1 Metros?</button>
+                            <button class="query-chip">Which 5 Tier-2 cities have the highest untapped revenue potential?</button>
+                            <button class="query-chip">What is the forecasted 6-month demand for Icodec in Tier-2 hubs?</button>
+                            <button class="query-chip">How can we solve cold-chain stockouts in Tier-3 towns?</button>
+                            <button class="query-chip">Compare Tresiba vs Ryzodeg growth in South India</button>
+                        </div>
+                    </div>
+
+                    <div class="copilot-chat-window">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="message ai">
+                                <div class="avatar"><i data-lucide="bot"></i></div>
+                                <div class="bubble">
+                                    Hello! I am your <strong>NovoIntel Commercial AI Assistant</strong>. Ask me any question about Tier-1 vs Tier-2 vs Tier-3 performance, product launch sequencing, field rep allocation, or cold-chain logistics in India.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-box">
+                            <input type="text" id="chat-input" placeholder="Type any commercial query (e.g. 'How to increase sales in Lucknow?')...">
+                            <button id="btn-send-chat" class="btn btn-primary"><i data-lucide="send"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
