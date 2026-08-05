@@ -1,7 +1,11 @@
-// Initialize Lucide icons on load
+// Initialize Lucide icons on load safely
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.lucide) {
-        lucide.createIcons();
+    try {
+        if (window.lucide && typeof lucide.createIcons === 'function') {
+            lucide.createIcons();
+        }
+    } catch (e) {
+        console.warn('Lucide icon init error:', e);
     }
 
     initNavigation();
@@ -229,13 +233,17 @@ function initNavigation() {
     const btnToggleMobile = document.getElementById('btn-toggle-mobile-menu');
 
     function toggleMobileMenu() {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
     }
 
     function closeMobileMenu() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
+        if (sidebar && overlay) {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
     }
 
     btnToggleMobile?.addEventListener('click', toggleMobileMenu);
@@ -276,88 +284,97 @@ function initNavigation() {
             tabPanes.forEach(p => p.classList.remove('active'));
 
             btn.classList.add('active');
-            document.getElementById(`${targetTab}-tab`).classList.add('active');
+            const targetEl = document.getElementById(`${targetTab}-tab`);
+            if (targetEl) targetEl.classList.add('active');
 
             if (titles[targetTab]) {
-                pageTitle.textContent = titles[targetTab].title;
-                pageSubtitle.textContent = titles[targetTab].sub;
+                if (pageTitle) pageTitle.textContent = titles[targetTab].title;
+                if (pageSubtitle) pageSubtitle.textContent = titles[targetTab].sub;
             }
 
             closeMobileMenu();
 
             if (targetTab === 'geography' && leafletMap) {
-                setTimeout(() => { leafletMap.invalidateSize(); }, 250);
+                setTimeout(() => { 
+                    try { leafletMap.invalidateSize(); } catch(e) {}
+                }, 250);
             }
         });
     });
 
     document.getElementById('btn-goto-map')?.addEventListener('click', () => {
-        document.querySelector('[data-tab="geography"]').click();
+        document.querySelector('[data-tab="geography"]')?.click();
     });
 
     document.getElementById('btn-view-recommender')?.addEventListener('click', () => {
-        document.querySelector('[data-tab="simulator"]').click();
+        document.querySelector('[data-tab="simulator"]')?.click();
     });
 }
 
 // 1. Executive Overview Charts
 function initOverviewCharts() {
-    const ctxTier = document.getElementById('tierRevenueChart')?.getContext('2d');
-    if (ctxTier) {
-        tierChart = new Chart(ctxTier, {
-            type: 'bar',
-            data: {
-                labels: ['Tier-1 Metros', 'Tier-2 Growth Cities', 'Tier-3 / District Hubs'],
-                datasets: [
-                    {
-                        label: 'Actual Revenue (Cr)',
-                        data: [2073, 1180, 587],
-                        backgroundColor: '#001965',
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'AI Market Potential (Cr)',
-                        data: [2150, 1465, 750],
-                        backgroundColor: 'rgba(5, 150, 105, 0.25)',
-                        borderColor: '#059669',
-                        borderWidth: 1,
-                        borderRadius: 6
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#001965', font: { weight: 'bold' } } },
-                    y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } }
-                }
-            }
-        });
-    }
+    if (typeof Chart === 'undefined') return;
 
-    const ctxPortfolio = document.getElementById('tierPortfolioChart')?.getContext('2d');
-    if (ctxPortfolio) {
-        portfolioChart = new Chart(ctxPortfolio, {
-            type: 'doughnut',
-            data: {
-                labels: ['Oral GLP-1 (Rybelsus)', 'Premix Insulins (Ryzodeg/Mix)', 'Base Insulins (Tresiba)', 'Injectable Obesity (Wegovy)', 'Biopharm / Smart Pen'],
-                datasets: [{
-                    data: [32, 30, 24, 9, 5],
-                    backgroundColor: ['#008bc6', '#001965', '#059669', '#7c3aed', '#d97706'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { color: '#0f172a', boxWidth: 12, padding: 12 } }
+    try {
+        const ctxTier = document.getElementById('tierRevenueChart')?.getContext('2d');
+        if (ctxTier) {
+            tierChart = new Chart(ctxTier, {
+                type: 'bar',
+                data: {
+                    labels: ['Tier-1 Metros', 'Tier-2 Growth Cities', 'Tier-3 / District Hubs'],
+                    datasets: [
+                        {
+                            label: 'Actual Revenue (Cr)',
+                            data: [2073, 1180, 587],
+                            backgroundColor: '#001965',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'AI Market Potential (Cr)',
+                            data: [2150, 1465, 750],
+                            backgroundColor: 'rgba(5, 150, 105, 0.25)',
+                            borderColor: '#059669',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }
+                    ]
                 },
-                cutout: '70%'
-            }
-        });
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#001965', font: { weight: 'bold' } } },
+                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } }
+                    }
+                }
+            });
+        }
+
+        const ctxPortfolio = document.getElementById('tierPortfolioChart')?.getContext('2d');
+        if (ctxPortfolio) {
+            portfolioChart = new Chart(ctxPortfolio, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Oral GLP-1 (Rybelsus)', 'Premix Insulins (Ryzodeg/Mix)', 'Base Insulins (Tresiba)', 'Injectable Obesity (Wegovy)', 'Biopharm / Smart Pen'],
+                    datasets: [{
+                        data: [32, 30, 24, 9, 5],
+                        backgroundColor: ['#008bc6', '#001965', '#059669', '#7c3aed', '#d97706'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#0f172a', boxWidth: 12, padding: 12 } }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+    } catch (e) {
+        console.warn('Overview charts init error:', e);
     }
 }
 
@@ -368,143 +385,149 @@ function initIndiaMapModule() {
     const deepDiveCard = document.getElementById('city-deep-dive');
     const btnCloseDeepDive = document.getElementById('btn-close-deep-dive');
 
-    if (!mapContainer) return;
+    if (!mapContainer || typeof L === 'undefined') return;
 
-    // Initialize Leaflet Map centered on India
-    leafletMap = L.map('india-map-container', {
-        center: [21.5937, 78.9629],
-        zoom: 5,
-        zoomControl: true
-    });
-
-    // Light CartoDB Voyager Map Tiles for Corporate White Theme
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-        subdomains: 'abcd',
-        maxZoom: 18
-    }).addTo(leafletMap);
-
-    // Populate City Selector Chips Bar below Map
-    selectorList.innerHTML = Object.keys(citiesDatabase).map(key => {
-        const c = citiesDatabase[key];
-        return `
-            <button class="city-chip-btn" data-city-key="${key}">
-                <span class="pulse-marker ${c.tierKey === 'tier1' ? 'green' : 'amber'}"></span>
-                <span>${c.name.split(' ')[0]} (${c.actualRev})</span>
-            </button>
-        `;
-    }).join('');
-
-    // Function to render Deep-Dive Page/Drawer for selected city
-    function renderCityDeepDive(cityKey) {
-        const c = citiesDatabase[cityKey];
-        if (!c) return;
-
-        document.getElementById('dd-city-name').textContent = c.name;
-        document.getElementById('dd-city-tier').textContent = c.tier;
-        document.getElementById('dd-city-tier').className = `badge ${c.tierKey === 'tier1' ? 'green' : 'amber'}`;
-        document.getElementById('dd-city-region').textContent = `• ${c.region}`;
-
-        document.getElementById('dd-rev-actual').textContent = c.actualRev;
-        document.getElementById('dd-rev-potential').textContent = c.potentialRev;
-        document.getElementById('dd-rev-gap').textContent = c.gapRev;
-        document.getElementById('dd-top-therapy').textContent = c.topTherapy;
-
-        // Render What is Lacking List
-        document.getElementById('dd-lacking-list').innerHTML = c.lacking.map(item => `
-            <li><i data-lucide="x-circle" style="color:#e11d48; flex-shrink:0; margin-top:2px;"></i> <span>${item}</span></li>
-        `).join('');
-
-        // Render Sales Parameters
-        document.getElementById('dd-sales-params').innerHTML = Object.keys(c.salesParams).map(k => `
-            <div class="param-item">
-                <span class="param-label">${k}</span>
-                <span class="param-val">${c.salesParams[k]}</span>
-            </div>
-        `).join('');
-
-        // Render Marketing Parameters
-        document.getElementById('dd-marketing-params').innerHTML = Object.keys(c.marketingParams).map(k => `
-            <div class="param-item">
-                <span class="param-label">${k}</span>
-                <span class="param-val">${c.marketingParams[k]}</span>
-            </div>
-        `).join('');
-
-        // Render AI Action Box
-        document.getElementById('dd-ai-action').innerHTML = `
-            <p><strong><i data-lucide="sparkles"></i> AI Prescriptive Recommendation:</strong> ${c.aiAction}</p>
-        `;
-
-        deepDiveCard.style.display = 'block';
-        deepDiveCard.scrollIntoView({ behavior: 'smooth' });
-
-        if (window.lucide) lucide.createIcons();
-
-        // Highlight selected button
-        document.querySelectorAll('.city-chip-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-city-key') === cityKey);
+    try {
+        // Initialize Leaflet Map centered on India
+        leafletMap = L.map('india-map-container', {
+            center: [21.5937, 78.9629],
+            zoom: 5,
+            zoomControl: true
         });
-    }
 
-    // Add Markers to Leaflet Map for each City
-    Object.keys(citiesDatabase).forEach(key => {
-        const c = citiesDatabase[key];
-        const isTier1 = c.tierKey === 'tier1';
-
-        const markerColor = isTier1 ? '#059669' : '#d97706';
-        const markerRadius = isTier1 ? 12 : 9;
-
-        const circleMarker = L.circleMarker([c.lat, c.lng], {
-            radius: markerRadius,
-            fillColor: markerColor,
-            color: '#ffffff',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.85
+        // Light CartoDB Voyager Map Tiles for Corporate White Theme
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 18
         }).addTo(leafletMap);
 
-        // Hover Tooltip Popup Content
-        const tooltipContent = `
-            <div class="map-hover-tooltip">
-                <h4>${c.name} <span class="badge ${isTier1 ? 'green' : 'amber'}">${c.tier}</span></h4>
-                <p><strong>Actual Revenue:</strong> ${c.actualRev} | <strong>Target:</strong> ${c.potentialRev}</p>
-                <p><strong>Revenue Gap:</strong> <span style="color:#e11d48; font-weight:700;">${c.gapRev}</span></p>
-                <p><strong>Top Product:</strong> ${c.topTherapy}</p>
-                <span class="click-hint">👉 Click for full Sales, Marketing & Bottleneck Deep-Dive</span>
-            </div>
-        `;
+        // Populate City Selector Chips Bar below Map
+        if (selectorList) {
+            selectorList.innerHTML = Object.keys(citiesDatabase).map(key => {
+                const c = citiesDatabase[key];
+                return `
+                    <button class="city-chip-btn" data-city-key="${key}">
+                        <span class="pulse-marker ${c.tierKey === 'tier1' ? 'green' : 'amber'}"></span>
+                        <span>${c.name.split(' ')[0]} (${c.actualRev})</span>
+                    </button>
+                `;
+            }).join('');
+        }
 
-        circleMarker.bindTooltip(tooltipContent, {
-            direction: 'top',
-            offset: [0, -10],
-            opacity: 1
-        });
+        // Function to render Deep-Dive Page/Drawer for selected city
+        function renderCityDeepDive(cityKey) {
+            const c = citiesDatabase[cityKey];
+            if (!c || !deepDiveCard) return;
 
-        // Click Event -> Render Deep-Dive Page
-        circleMarker.on('click', () => {
-            renderCityDeepDive(key);
-        });
-    });
+            document.getElementById('dd-city-name').textContent = c.name;
+            document.getElementById('dd-city-tier').textContent = c.tier;
+            document.getElementById('dd-city-tier').className = `badge ${c.tierKey === 'tier1' ? 'green' : 'amber'}`;
+            document.getElementById('dd-city-region').textContent = `• ${c.region}`;
 
-    // Handle Sidebar City Select Clicks
-    document.querySelectorAll('.city-chip-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const key = btn.getAttribute('data-city-key');
-            renderCityDeepDive(key);
+            document.getElementById('dd-rev-actual').textContent = c.actualRev;
+            document.getElementById('dd-rev-potential').textContent = c.potentialRev;
+            document.getElementById('dd-rev-gap').textContent = c.gapRev;
+            document.getElementById('dd-top-therapy').textContent = c.topTherapy;
+
+            // Render What is Lacking List
+            document.getElementById('dd-lacking-list').innerHTML = c.lacking.map(item => `
+                <li><i data-lucide="x-circle" style="color:#e11d48; flex-shrink:0; margin-top:2px;"></i> <span>${item}</span></li>
+            `).join('');
+
+            // Render Sales Parameters
+            document.getElementById('dd-sales-params').innerHTML = Object.keys(c.salesParams).map(k => `
+                <div class="param-item">
+                    <span class="param-label">${k}</span>
+                    <span class="param-val">${c.salesParams[k]}</span>
+                </div>
+            `).join('');
+
+            // Render Marketing Parameters
+            document.getElementById('dd-marketing-params').innerHTML = Object.keys(c.marketingParams).map(k => `
+                <div class="param-item">
+                    <span class="param-label">${k}</span>
+                    <span class="param-val">${c.marketingParams[k]}</span>
+                </div>
+            `).join('');
+
+            // Render AI Action Box
+            document.getElementById('dd-ai-action').innerHTML = `
+                <p><strong><i data-lucide="sparkles"></i> AI Prescriptive Recommendation:</strong> ${c.aiAction}</p>
+            `;
+
+            deepDiveCard.style.display = 'block';
+            deepDiveCard.scrollIntoView({ behavior: 'smooth' });
+
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+
+            // Highlight selected button
+            document.querySelectorAll('.city-chip-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-city-key') === cityKey);
+            });
+        }
+
+        // Add Markers to Leaflet Map for each City
+        Object.keys(citiesDatabase).forEach(key => {
             const c = citiesDatabase[key];
-            if (c && leafletMap) {
-                leafletMap.flyTo([c.lat, c.lng], 8, { duration: 1.2 });
-            }
+            const isTier1 = c.tierKey === 'tier1';
+
+            const markerColor = isTier1 ? '#059669' : '#d97706';
+            const markerRadius = isTier1 ? 12 : 9;
+
+            const circleMarker = L.circleMarker([c.lat, c.lng], {
+                radius: markerRadius,
+                fillColor: markerColor,
+                color: '#ffffff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.85
+            }).addTo(leafletMap);
+
+            // Hover Tooltip Popup Content
+            const tooltipContent = `
+                <div class="map-hover-tooltip">
+                    <h4>${c.name} <span class="badge ${isTier1 ? 'green' : 'amber'}">${c.tier}</span></h4>
+                    <p><strong>Actual Revenue:</strong> ${c.actualRev} | <strong>Target:</strong> ${c.potentialRev}</p>
+                    <p><strong>Revenue Gap:</strong> <span style="color:#e11d48; font-weight:700;">${c.gapRev}</span></p>
+                    <p><strong>Top Product:</strong> ${c.topTherapy}</p>
+                    <span class="click-hint">👉 Click for full Sales, Marketing & Bottleneck Deep-Dive</span>
+                </div>
+            `;
+
+            circleMarker.bindTooltip(tooltipContent, {
+                direction: 'top',
+                offset: [0, -10],
+                opacity: 1
+            });
+
+            // Click Event -> Render Deep-Dive Page
+            circleMarker.on('click', () => {
+                renderCityDeepDive(key);
+            });
         });
-    });
 
-    btnCloseDeepDive?.addEventListener('click', () => {
-        deepDiveCard.style.display = 'none';
-    });
+        // Handle Sidebar City Select Clicks
+        document.querySelectorAll('.city-chip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.getAttribute('data-city-key');
+                renderCityDeepDive(key);
+                const c = citiesDatabase[key];
+                if (c && leafletMap) {
+                    leafletMap.flyTo([c.lat, c.lng], 8, { duration: 1.2 });
+                }
+            });
+        });
 
-    // Default select Lucknow on load
-    renderCityDeepDive('lucknow');
+        btnCloseDeepDive?.addEventListener('click', () => {
+            if (deepDiveCard) deepDiveCard.style.display = 'none';
+        });
+
+        // Default select Lucknow on load
+        renderCityDeepDive('lucknow');
+    } catch (e) {
+        console.warn('Map module init error:', e);
+    }
 }
 
 // 3. Product Launch Engine by Tier
@@ -549,42 +572,50 @@ function initLaunchModule() {
     const timelineContainer = document.getElementById('rollout-timeline');
 
     function updateLaunchView() {
-        const prodKey = selectProduct.value;
+        const prodKey = selectProduct ? selectProduct.value : 'icodec';
         const data = launchData[prodKey];
         if (!data) return;
 
-        timelineContainer.innerHTML = data.timeline.map(t => `
-            <div class="timeline-step">
-                <span class="timeline-phase">${t.phase}</span>
-                <h4 class="timeline-title">${t.title}</h4>
-                <p class="timeline-desc">${t.desc}</p>
-            </div>
-        `).join('');
+        if (timelineContainer) {
+            timelineContainer.innerHTML = data.timeline.map(t => `
+                <div class="timeline-step">
+                    <span class="timeline-phase">${t.phase}</span>
+                    <h4 class="timeline-title">${t.title}</h4>
+                    <p class="timeline-desc">${t.desc}</p>
+                </div>
+            `).join('');
+        }
 
-        const ctx = document.getElementById('launchTierChart')?.getContext('2d');
-        if (ctx) {
-            if (launchChart) launchChart.destroy();
-            launchChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: 'AI Tier Launch Affinity Score (0-100)',
-                        data: data.scores,
-                        backgroundColor: ['#001965', '#d97706', '#e11d48'],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { max: 100, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } },
-                        x: { grid: { display: false }, ticks: { color: '#001965', font: { weight: 'bold' } } }
+        if (typeof Chart === 'undefined') return;
+
+        try {
+            const ctx = document.getElementById('launchTierChart')?.getContext('2d');
+            if (ctx) {
+                if (launchChart) launchChart.destroy();
+                launchChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'AI Tier Launch Affinity Score (0-100)',
+                            data: data.scores,
+                            backgroundColor: ['#001965', '#d97706', '#e11d48'],
+                            borderRadius: 6
+                        }]
                     },
-                    plugins: { legend: { display: false } }
-                }
-            });
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { max: 100, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } },
+                            x: { grid: { display: false }, ticks: { color: '#001965', font: { weight: 'bold' } } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn('Launch chart error:', e);
         }
     }
 
@@ -607,59 +638,65 @@ function initSimulatorModule() {
     const roiVal = document.getElementById('sim-roi-val');
 
     function updateSimulation() {
-        const fieldVal = parseInt(sField.value);
-        const hcpVal = parseInt(sHcp.value);
-        const distVal = parseInt(sDist.value);
+        const fieldVal = sField ? parseInt(sField.value) : 15;
+        const hcpVal = sHcp ? parseInt(sHcp.value) : 20;
+        const distVal = sDist ? parseInt(sDist.value) : 10;
 
-        vField.textContent = (fieldVal > 0 ? '+' : '') + fieldVal + '%';
-        vHcp.textContent = '+' + hcpVal + '%';
-        vDist.textContent = '+' + distVal + '%';
+        if (vField) vField.textContent = (fieldVal > 0 ? '+' : '') + fieldVal + '%';
+        if (vHcp) vHcp.textContent = '+' + hcpVal + '%';
+        if (vDist) vDist.textContent = '+' + distVal + '%';
 
         const netDelta = (fieldVal * 5.2) + (hcpVal * 4.8) + (distVal * 3.5);
         const roundedDelta = Math.round(netDelta);
 
-        netBadge.textContent = `${roundedDelta >= 0 ? '+' : ''}₹${roundedDelta} Cr Projected Revenue Delta`;
-        roiVal.textContent = (3.5 + (hcpVal * 0.04)).toFixed(1) + 'x';
+        if (netBadge) netBadge.textContent = `${roundedDelta >= 0 ? '+' : ''}₹${roundedDelta} Cr Projected Revenue Delta`;
+        if (roiVal) roiVal.textContent = (3.5 + (hcpVal * 0.04)).toFixed(1) + 'x';
 
-        const ctx = document.getElementById('simulationChart')?.getContext('2d');
-        if (ctx) {
-            const months = ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'];
-            const baseline = [320, 322, 325, 328, 330, 332, 335, 338, 340, 342, 345, 348];
-            const simulated = baseline.map((b, idx) => Math.round(b + (roundedDelta / 12) * (idx + 1) * 0.22));
+        if (typeof Chart === 'undefined') return;
 
-            if (simChart) simChart.destroy();
-            simChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [
-                        {
-                            label: 'Tier-2 Shift Strategy Trajectory',
-                            data: simulated,
-                            borderColor: '#059669',
-                            backgroundColor: 'rgba(5, 150, 105, 0.08)',
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Baseline Projection (Current Allocation)',
-                            data: baseline,
-                            borderColor: '#64748b',
-                            borderDash: [5, 5],
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } },
-                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } }
+        try {
+            const ctx = document.getElementById('simulationChart')?.getContext('2d');
+            if (ctx) {
+                const months = ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'];
+                const baseline = [320, 322, 325, 328, 330, 332, 335, 338, 340, 342, 345, 348];
+                const simulated = baseline.map((b, idx) => Math.round(b + (roundedDelta / 12) * (idx + 1) * 0.22));
+
+                if (simChart) simChart.destroy();
+                simChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [
+                            {
+                                label: 'Tier-2 Shift Strategy Trajectory',
+                                data: simulated,
+                                borderColor: '#059669',
+                                backgroundColor: 'rgba(5, 150, 105, 0.08)',
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Baseline Projection (Current Allocation)',
+                                data: baseline,
+                                borderColor: '#64748b',
+                                borderDash: [5, 5],
+                                tension: 0.3
+                            }
+                        ]
                     },
-                    plugins: { legend: { labels: { color: '#001965' } } }
-                }
-            });
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } },
+                            y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } }
+                        },
+                        plugins: { legend: { labels: { color: '#001965' } } }
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn('Simulation chart error:', e);
         }
     }
 
@@ -677,6 +714,7 @@ function initCopilotModule() {
     const chips = document.querySelectorAll('.query-chip');
 
     function appendMessage(sender, text) {
+        if (!messagesBox) return;
         const msgDiv = document.createElement('div');
         msgDiv.className = `message ${sender}`;
         msgDiv.innerHTML = `
@@ -685,7 +723,7 @@ function initCopilotModule() {
         `;
         messagesBox.appendChild(msgDiv);
         messagesBox.scrollTop = messagesBox.scrollHeight;
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
 
     function generateIntelligentResponse(userText) {
@@ -739,18 +777,18 @@ function initCopilotModule() {
     }
 
     function handleSend(userText) {
-        if (!userText.trim()) return;
+        if (!userText || !userText.trim()) return;
         appendMessage('user', userText);
-        chatInput.value = '';
+        if (chatInput) chatInput.value = '';
 
         const reply = generateIntelligentResponse(userText);
 
         setTimeout(() => {
             appendMessage('ai', reply);
-        }, 500);
+        }, 400);
     }
 
-    btnSend?.addEventListener('click', () => handleSend(chatInput.value));
+    btnSend?.addEventListener('click', () => handleSend(chatInput ? chatInput.value : ''));
     chatInput?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleSend(chatInput.value);
     });
